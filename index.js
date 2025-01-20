@@ -1,7 +1,7 @@
 const express = require("express"); //expressを使う
 const app = express(); //expressでアプリを起動
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 // GETメソッドが来た時の処理
 //"/" = ルート
 app.get("/fib", (req, res) => {
