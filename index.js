@@ -1,17 +1,37 @@
 const express = require("express"); //expressを使う
 const app = express(); //expressでアプリを起動
+const fibonacci = require("./fibonacci") 
+const checkQuery = require("./checkquery")
 
 const port = process.env.PORT || 3000;
 // GETメソッドが来た時の処理
 //"/" = ルート
 app.get("/fib", (req, res) => {
     //クエリパラメータnの取得
-    const n = req.query.n
+    const n = req.query.n;
+
+    const  check_n = checkQuery(n)
+
+    if(check_n === false){
+        return res.status(400).json({
+            "status": 400,
+            "message": "Bad request"
+        });
+    }
+    /*
+    //nが正常でない時
+    if (!/^\d+$/.test(n) || parseInt(n, 10) <= 0) {
+        return res.status(400).json({
+            "status": 400,
+            "message": "Bad request"
+        });
+    }
+    */
 
     //フィボナッチ数を計算
     const result = fibonacci(n)
 
-    //jsonの返却
+    //正常なjsonの返却
     res.json({
         //フィボナッチ数を返す
         result: result.toString()
@@ -19,51 +39,13 @@ app.get("/fib", (req, res) => {
 });
 
 //サーバの構築
-app.listen(port, () => {
-    console.log("サーバ構築完了");
-});
-
-/*
-//フィボナッチ数を計算する関数
-const memo = {}
-function fibonacci(n){
-    //フィボナッチ数を計算
-    if(n === 1 || n === 2){
-        return BigInt(1);
-    } 
-    if(n in memo){
-        return memo[n]
-    }else{
-        memo[n] = fibonacci(n - 1) + fibonacci(n - 2);
-        return memo[n]
-    }
-        //再起を利用して計算
-        //return fibonacci(n - 1) + fibonacci(n - 2);
-
-
-
+// テスト環境では listen を実行しない
+if(process.env.NODE_ENV !== 'test') {
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+    });
 }
-*/
-function fibonacci(n) {
-    // 入力をBigInt型に変換
-    n = BigInt(n);
 
-    // フィボナッチ数の基底ケース
-    if (n === 1n || n === 2n) {
-        return 1n;
-    }
 
-    // 初期値
-    let prev1 = 1n; // F(1)
-    let prev2 = 1n; // F(2)
-    let current = 0n;
-
-    // ループで計算
-    for (let i = 3n; i <= n; i++) {
-        current = prev1 + prev2; // F(n) = F(n-1) + F(n-2)
-        prev2 = prev1; // 更新
-        prev1 = current; // 更新
-    }
-
-    return current;
-}
+module.exports = app;
