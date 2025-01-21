@@ -3,7 +3,6 @@ const app = express(); //expressでアプリを起動
 const fibonacci = require("./fibonacci") 
 const checkQuery = require("./checkquery")
 
-const port = process.env.PORT || 3000;
 // GETメソッドが来た時の処理
 //"/" = ルート
 app.get("/fib", (req, res) => {
@@ -18,15 +17,7 @@ app.get("/fib", (req, res) => {
             "message": "Bad request"
         });
     }
-    /*
-    //nが正常でない時
-    if (!/^\d+$/.test(n) || parseInt(n, 10) <= 0) {
-        return res.status(400).json({
-            "status": 400,
-            "message": "Bad request"
-        });
-    }
-    */
+   
 
     //フィボナッチ数を計算
     const result = fibonacci(n)
